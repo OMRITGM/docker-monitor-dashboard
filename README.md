@@ -1,5 +1,3 @@
-# docker-monitor-dashboard
-Real-time Docker container monitoring dashboard with Python + webhooks
 # Docker Monitor Dashboard
 
 Real-time monitoring dashboard for Docker containers with webhook notifications.
