@@ -1,0 +1,41 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## J.A.R.V.I.S. // Docker Monitor Dashboard - Release ${{ github.ref_name }}
+            
+            Welcome to the official release of the J.A.R.V.I.S. themed Docker Monitor Dashboard!
+            
+            ### Docker Container Registry Image
+            Pull the pre-built Docker image:
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}:latest
+            ```
+            
+            ### Key Features
+            - **J.A.R.V.I.S. Holographic Interface**: Glowing visual dashboards, audio synthesis, and custom bleeps.
+            - **Multi-Language & RTL Layout**: Support for English and Hebrew RTL.
+            - **Synology NAS Connection**: Auto-parsing of remote Synology IPs/ports.
+            - **Mock Mode**: Fully operational simulator fallback.
+            - **Webhook System**: Dispatching live alert JSON payloads.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
