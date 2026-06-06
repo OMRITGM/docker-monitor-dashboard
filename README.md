@@ -83,7 +83,7 @@ pytest tests/test_app.py -v
 - ✅ `test_get_containers` - Verifies the containers endpoint returns mock data (HTTP 200)
 - ✅ `test_get_config` - Verifies the config endpoint returns required fields (HTTP 200)
 
-All tests pass successfully with mock container data, ensuring the dashboard operates correctly even without a real Docker connection.
+All tests run deterministically in Mock Mode by setting the `DOCKER_MONITOR_MOCK=true` environment variable (which is handled automatically inside the test suite). This ensures the test suite passes reliably in any environment (both locally and in CI/CD pipelines) regardless of whether a real Docker daemon is running on the host.
 
 ---
 
