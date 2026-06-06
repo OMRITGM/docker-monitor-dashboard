@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. // Docker Monitor Dashboard</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="jarvis-theme">
+    <!-- Matrix/Scanline Overlay -->
+    <div class="hud-scanlines"></div>
+    <div class="hud-grid-overlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar / HUD Left -->
+        <aside class="sidebar hud-panel">
+            <div class="logo-container">
+                <!-- 3D Arc Reactor / JARVIS Core -->
+                <div class="arc-reactor-wrapper" id="arc-reactor">
+                    <svg viewBox="0 0 100 100" class="arc-reactor-svg">
+                        <circle cx="50" cy="50" r="45" class="ring ring-outer" />
+                        <circle cx="50" cy="50" r="38" class="ring ring-middle" />
+                        <circle cx="50" cy="50" r="30" class="ring ring-inner" />
+                        <path d="M 50,5 L 50,20 M 50,95 L 50,80 M 5,50 L 20,50 M 95,50 L 80,50" class="crosshairs" />
+                        <circle cx="50" cy="50" r="15" class="reactor-core" id="reactor-core-element" />
+                    </svg>
+                    <div class="reactor-glow"></div>
+                </div>
+                <div class="logo-text">
+                    <h2>J.A.R.V.I.S.</h2>
+                    <span>Docker Core v1.4</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+                    <i class="ph ph-activity"></i>
+                    <span>SYSTEM HUD</span>
+                </a>
+                <a href="#containers" class="nav-item" id="nav-containers">
+                    <i class="ph ph-grid-four"></i>
+                    <span>SUB-SYSTEMS</span>
+                </a>
+                <a href="#webhooks" class="nav-item" id="nav-webhooks">
+                    <i class="ph ph-broadcast"></i>
+                    <span>COMMS LINK</span>
+                </a>
+            </nav>
+            
+            <!-- Audio / Voice Control -->
+            <div class="hud-voice-control">
+                <button class="btn btn-hud-toggle" id="btn-toggle-voice" title="Toggle JARVIS Voice">
+                    <i class="ph-bold ph-speaker-high" id="voice-icon"></i>
+                    <span>VOICE: ON</span>
+                </button>
+                <button class="btn btn-hud-toggle" id="btn-toggle-audio" title="Toggle SFX">
+                    <i class="ph-bold ph-music-notes" id="audio-icon"></i>
+                    <span>SFX: ON</span>
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="mode-badge">
+                    <span id="mode-text">INITIALIZING STATS...</span>
+                    <span class="pulse-dot" id="mode-dot"></span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Panel -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header hud-panel">
+                <div class="header-title">
+                    <h1>SYSTEM DIAGNOSTICS HUD</h1>
+                    <div class="hud-subtitle-row">
+                        <span class="hud-tag">SECURE LINK ESTABLISHED</span>
+                        <span class="hud-tag">SYSTEM STATUS: <span id="sys-status-text" class="status-ok">NOMINAL</span></span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-hud-secondary" id="btn-refresh">
+                        <i class="ph ph-waveform"></i>
+                        <span>RECONNECT PROTOCOL</span>
+                    </button>
+                    <button class="btn btn-hud-primary" id="btn-open-settings">
+                        <i class="ph ph-sliders"></i>
+                        <span>COMMS CONFIG</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Dashboard View -->
+            <div class="view-pane" id="view-dashboard">
+                <!-- Metrics Grid -->
+                <section class="metrics-grid">
+                    <div class="metric-card card-hud card-cyan">
+                        <div class="hud-card-corners"></div>
+                        <div class="card-info">
+                            <p class="metric-label">MONITORED CORES</p>
+                            <h3 id="stat-total">0</h3>
+                        </div>
+                        <div class="hud-mini-graph" id="total-minigraph">
+                            <span>TOTAL REGISTRY</span>
+                        </div>
+                    </div>
+                    <div class="metric-card card-hud card-green">
+                        <div class="hud-card-corners"></div>
+                        <div class="card-info">
+                            <p class="metric-label">ACTIVE SUB-SYSTEMS</p>
+                            <h3 id="stat-running">0</h3>
+                        </div>
+                        <div class="hud-mini-graph">
+                            <span class="text-green">ONLINE</span>
+                        </div>
+                    </div>
+                    <div class="metric-card card-hud card-red">
+                        <div class="hud-card-corners"></div>
+                        <div class="card-info">
+                            <p class="metric-label">OFFLINE NODES</p>
+                            <h3 id="stat-stopped">0</h3>
+                        </div>
+                        <div class="hud-mini-graph">
+                            <span class="text-red">OFFLINE</span>
+                        </div>
+                    </div>
+                    <div class="metric-card card-hud card-purple">
+                        <div class="hud-card-corners"></div>
+                        <div class="card-info">
+                            <p class="metric-label">COMMS TRANSMITTER</p>
+                            <h3 id="stat-webhook" class="text-purple">OFFLINE</h3>
+                        </div>
+                        <div class="hud-mini-graph">
+                            <span>WEBHOOK LINK</span>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Main Grid Layout -->
+                <div class="dashboard-grid">
+                    <!-- Containers Table Card -->
+                    <div class="glass-card hud-panel container-list-card">
+                        <div class="hud-panel-header">
+                            <div class="header-left">
+                                <i class="ph ph-cpu"></i>
+                                <h2>VECTOR STREAM INDEX</h2>
+                            </div>
+                            <div class="search-box">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" id="search-input" placeholder="Query Node Image/ID...">
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="container-table hud-table">
+                                <thead>
+                                    <tr>
+                                        <th>NODE ASSIGNMENT</th>
+                                        <th>STATUS</th>
+                                        <th>VPU LOAD</th>
+                                        <th>MEM UTILIZATION</th>
+                                        <th>NET FLUX (IN/OUT)</th>
+                                        <th>COMMAND MATRIX</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="containers-tbody">
+                                    <tr class="placeholder-row">
+                                        <td colspan="6">
+                                            <div class="loading-state">
+                                                <div class="spinner"></div>
+                                                <p>Establishing quantum uplink to WebSocket...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Live Graphs Card -->
+                    <div class="glass-card hud-panel charts-card">
+                        <div class="hud-panel-header">
+                            <div class="header-left">
+                                <i class="ph ph-chart-scatter"></i>
+                                <h2>ANALYTICAL FLUX SENSORS</h2>
+                            </div>
+                            <div class="container-selector-wrapper">
+                                <select id="chart-container-select" class="hud-select">
+                                    <option value="">Select Subsystem...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="charts-container">
+                            <div class="chart-wrapper hud-chart-border">
+                                <canvas id="cpu-chart"></canvas>
+                            </div>
+                            <div class="chart-wrapper hud-chart-border">
+                                <canvas id="mem-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Terminal Console Card -->
+                <div class="glass-card hud-panel console-card">
+                    <div class="hud-panel-header">
+                        <div class="header-left">
+                            <i class="ph ph-terminal-window"></i>
+                            <h2 id="logs-title">SYSTEM DEBUG VECTOR</h2>
+                        </div>
+                        <div class="logs-actions">
+                            <span id="selected-log-container-name" class="hud-badge">AWAITING COMPONENT TARGET</span>
+                            <button class="btn btn-hud-icon" id="btn-clear-logs" title="Clear Buffer">
+                                <i class="ph ph-trash-simple"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="console-body hud-terminal-bg">
+                        <div class="console-output hud-terminal-output" id="logs-output">
+=============================================================================
+J.A.R.V.I.S. DOCKER MONITOR SYSTEM ONLINE
+Awaiting sub-system target. Click on a node name above to link logs telemetry.
+=============================================================================
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Webhooks View -->
+            <div class="view-pane hidden" id="view-webhooks">
+                <div class="glass-card hud-panel form-card">
+                    <div class="hud-panel-header">
+                        <div class="header-left">
+                            <i class="ph ph-broadcast"></i>
+                            <h2>COMMS LINK CONFIGURATION</h2>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p class="section-desc hud-glow-text">
+                            Initialize a telemetry relay webhook. When sub-systems exit unexpected boundaries, J.A.R.V.I.S. will dispatch a data packet to the configured relay URL.
+                        </p>
+                        
+                        <form id="webhook-form" class="config-form">
+                            <div class="form-group">
+                                <label for="webhook-url-input">RELAY GATEWAY ENDPOINT</label>
+                                <div class="input-with-icon hud-input-group">
+                                    <i class="ph ph-globe-hemisphere-east"></i>
+                                    <input type="url" id="webhook-url-input" class="hud-input" placeholder="https://api.n8n.cloud/webhook/...">
+                                </div>
+                                <span class="help-text">HTTP POST REST format. JSON packet. Leave blank if not using webhooks.</span>
+                            </div>
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="docker-host-input">DOCKER ENGINE GATEWAY URL (NAS / SERVER)</label>
+                                <div class="input-with-icon hud-input-group">
+                                    <i class="ph ph-hard-drive"></i>
+                                    <input type="text" id="docker-host-input" class="hud-input" placeholder="tcp://192.168.1.100:2375 (Or blank for local environment)">
+                                </div>
+                                <span class="help-text">Connect to remote NAS or virtual machines. (e.g. tcp://192.168.1.100:2375). Leave blank to search default local socket.</span>
+                            </div>
+                            <div class="form-actions" style="margin-top: 25px;">
+                                <button type="submit" class="btn btn-hud-primary">
+                                    <i class="ph ph-link-simple-horizontal"></i>
+                                    <span>ACTIVATE CONFIGURATION</span>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="payload-example">
+                            <h3>COMMS DATA MATRIX DEFINITION</h3>
+                            <pre><code class="language-json">{
+  "event": "Container Stop (exited)",
+  "timestamp": "2026-06-06T13:50:00Z",
+  "container": {
+    "name": "api-node",
+    "image": "node:18-alpine",
+    "status": "stopped"
+  },
+  "details": "The container 'api-node' transitioned from 'running' to 'exited'."
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Webhook settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content glass-card hud-panel">
+            <div class="hud-panel-header">
+                <h2 data-i18n="modal_title">COMMS ROUTE CHANNEL</h2>
+                <button class="btn-close" id="btn-close-modal"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="hud-glow-text" data-i18n="modal_desc">Route webhook alerts to N8N, Slack, or Discord endpoints when container cores fail.</p>
+                <div class="form-group">
+                    <label for="modal-webhook-input" data-i18n="modal_webhook_label">RELAY WEBHOOK URL</label>
+                    <input type="url" id="modal-webhook-input" placeholder="https://..." class="hud-input modal-input">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="modal-docker-host-input" data-i18n="modal_host_label">DOCKER HOST URL (NAS / REMOTE)</label>
+                    <input type="text" id="modal-docker-host-input" placeholder="tcp://192.168.1.100:2375 (Leave blank for local)" class="hud-input modal-input">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="modal-lang-select" data-i18n="modal_lang_label">INTERFACE LANGUAGE</label>
+                    <select id="modal-lang-select" class="hud-select modal-input" style="width: 100%; height: 40px;">
+                        <option value="en">English (Default)</option>
+                        <option value="he">עברית (Hebrew)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="modal-voice-select" data-i18n="modal_voice_label">J.A.R.V.I.S. SPEECH VOICE</label>
+                    <select id="modal-voice-select" class="hud-select modal-input" style="width: 100%; height: 40px;">
+                        <option value="">Awaiting speech engine...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-hud-secondary" id="btn-modal-cancel" data-i18n="modal_abort">ABORT</button>
+                <button class="btn btn-hud-primary" id="btn-modal-save" data-i18n="modal_initiate">INITIATE UPLINK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification System -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Custom Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
