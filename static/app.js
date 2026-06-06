@@ -349,11 +349,22 @@ function setupNavigation() {
             
             // Update page title
             const titles = {
-                'dashboard': 'SYSTEM DIAGNOSTICS HUD',
-                'containers': 'SUB-SYSTEM REGISTRY',
-                'webhooks': 'TELEMETRY BROADCASTER LINK'
+                en: {
+                    'dashboard': 'SYSTEM DIAGNOSTICS HUD',
+                    'containers': 'SUB-SYSTEM REGISTRY',
+                    'webhooks': 'TELEMETRY BROADCASTER LINK'
+                },
+                he: {
+                    'dashboard': 'לוח בקרת דיאגנוסטיקה',
+                    'containers': 'אינדקס זרם וקטורי',
+                    'webhooks': 'קישור שידור התראות'
+                }
             };
-            document.getElementById('page-title').textContent = titles[targetId] || 'J.A.R.V.I.S.';
+            const activeTitle = (titles[currentLanguage] && titles[currentLanguage][targetId]) || titles['en'][targetId] || 'J.A.R.V.I.S.';
+            const titleEl = document.getElementById('page-title');
+            if (titleEl) {
+                titleEl.textContent = activeTitle;
+            }
         });
     });
 }
@@ -429,18 +440,20 @@ function updateMetricsSummary() {
     const statusText = document.getElementById('sys-status-text');
     const reactorBody = document.body;
     
+    // Preserve status classes on body correctly without resetting rtl-mode
+    reactorBody.classList.remove('status-warning', 'status-error');
+    
     if (stopped > 0 && running > 0) {
-        statusText.textContent = 'DEGRADED';
+        statusText.textContent = currentLanguage === 'he' ? 'מוגבל' : 'DEGRADED';
         statusText.className = 'status-warning';
-        reactorBody.className = 'jarvis-theme status-warning';
+        reactorBody.classList.add('status-warning');
     } else if (running === 0 && total > 0) {
-        statusText.textContent = 'CRITICAL';
+        statusText.textContent = currentLanguage === 'he' ? 'קריטי' : 'CRITICAL';
         statusText.className = 'status-error';
-        reactorBody.className = 'jarvis-theme status-error';
+        reactorBody.classList.add('status-error');
     } else {
-        statusText.textContent = 'NOMINAL';
+        statusText.textContent = currentLanguage === 'he' ? 'תקין' : 'NOMINAL';
         statusText.className = 'status-ok';
-        reactorBody.className = 'jarvis-theme';
     }
 
     // Voice triggers for status change detection
@@ -834,7 +847,7 @@ function saveConfigData(url, dockerHost) {
             } else if (dockerHost.trim() !== '') {
                 showToast(
                     currentLanguage === 'he' ? 'חיבור Docker נכשל' : 'Docker Link Failed', 
-                    currentLanguage === 'he' ? 'מכשיר היעד מנותק. חוזר למצב סימולציה.' : 'Target host offline. Fallback to mock mode.', 
+                    currentLanguage === 'he' ? `התחברות נכשלה: ${data.error_message || 'מכשיר היעד מנותק'}. חוזר למצב סימולציה.` : `Connection failed: ${data.error_message || 'Target host offline'}. Fallback to mock mode.`, 
                     'error'
                 );
                 speak("Warning. Host gateway offline. Initializing simulation fallback.");

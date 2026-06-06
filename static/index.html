@@ -17,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=2.0">
 </head>
 <body class="jarvis-theme">
     <!-- Matrix/Scanline Overlay -->
@@ -41,22 +41,22 @@
                 </div>
                 <div class="logo-text">
                     <h2>J.A.R.V.I.S.</h2>
-                    <span>Docker Core v1.4</span>
+                    <span>Docker Core v2.0</span>
                 </div>
             </div>
             
             <nav class="sidebar-nav">
                 <a href="#dashboard" class="nav-item active" id="nav-dashboard">
                     <i class="ph ph-activity"></i>
-                    <span>SYSTEM HUD</span>
+                    <span data-i18n="nav_dashboard">SYSTEM HUD</span>
                 </a>
                 <a href="#containers" class="nav-item" id="nav-containers">
                     <i class="ph ph-grid-four"></i>
-                    <span>SUB-SYSTEMS</span>
+                    <span data-i18n="nav_containers">SUB-SYSTEMS</span>
                 </a>
                 <a href="#webhooks" class="nav-item" id="nav-webhooks">
                     <i class="ph ph-broadcast"></i>
-                    <span>COMMS LINK</span>
+                    <span data-i18n="nav_webhooks">COMMS LINK</span>
                 </a>
             </nav>
             
@@ -85,18 +85,18 @@
             <!-- Header -->
             <header class="main-header hud-panel">
                 <div class="header-title">
-                    <h1>SYSTEM DIAGNOSTICS HUD</h1>
+                    <h1 id="page-title" data-i18n="main_title">SYSTEM DIAGNOSTICS HUD</h1>
                     <div class="hud-subtitle-row">
-                        <span class="hud-tag">SECURE LINK ESTABLISHED</span>
-                        <span class="hud-tag">SYSTEM STATUS: <span id="sys-status-text" class="status-ok">NOMINAL</span></span>
+                        <span class="hud-tag" data-i18n="secure_link">SECURE LINK ESTABLISHED</span>
+                        <span class="hud-tag"><span data-i18n="system_status">SYSTEM STATUS: </span><span id="sys-status-text" class="status-ok">NOMINAL</span></span>
                     </div>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-hud-secondary" id="btn-refresh">
+                    <button class="btn btn-hud-secondary" id="btn-refresh" data-i18n="btn_reconnect">
                         <i class="ph ph-waveform"></i>
                         <span>RECONNECT PROTOCOL</span>
                     </button>
-                    <button class="btn btn-hud-primary" id="btn-open-settings">
+                    <button class="btn btn-hud-primary" id="btn-open-settings" data-i18n="btn_comms_config">
                         <i class="ph ph-sliders"></i>
                         <span>COMMS CONFIG</span>
                     </button>
@@ -110,106 +110,106 @@
                     <div class="metric-card card-hud card-cyan">
                         <div class="hud-card-corners"></div>
                         <div class="card-info">
-                            <p class="metric-label">MONITORED CORES</p>
+                            <p class="metric-label" data-i18n="stat_cores">MONITORED CORES</p>
                             <h3 id="stat-total">0</h3>
                         </div>
                         <div class="hud-mini-graph" id="total-minigraph">
-                            <span>TOTAL REGISTRY</span>
+                            <span data-i18n="stat_total_registry">TOTAL REGISTRY</span>
                         </div>
                     </div>
                     <div class="metric-card card-hud card-green">
                         <div class="hud-card-corners"></div>
                         <div class="card-info">
-                            <p class="metric-label">ACTIVE SUB-SYSTEMS</p>
+                            <p class="metric-label" data-i18n="stat_active">ACTIVE SUB-SYSTEMS</p>
                             <h3 id="stat-running">0</h3>
                         </div>
                         <div class="hud-mini-graph">
-                            <span class="text-green">ONLINE</span>
+                            <span class="text-green" data-i18n="stat_online">ONLINE</span>
                         </div>
                     </div>
                     <div class="metric-card card-hud card-red">
                         <div class="hud-card-corners"></div>
                         <div class="card-info">
-                            <p class="metric-label">OFFLINE NODES</p>
+                            <p class="metric-label" data-i18n="stat_offline_nodes">OFFLINE NODES</p>
                             <h3 id="stat-stopped">0</h3>
                         </div>
                         <div class="hud-mini-graph">
-                            <span class="text-red">OFFLINE</span>
+                            <span class="text-red" data-i18n="stat_offline">OFFLINE</span>
                         </div>
                     </div>
                     <div class="metric-card card-hud card-purple">
                         <div class="hud-card-corners"></div>
                         <div class="card-info">
-                            <p class="metric-label">COMMS TRANSMITTER</p>
+                            <p class="metric-label" data-i18n="stat_comms">COMMS TRANSMITTER</p>
                             <h3 id="stat-webhook" class="text-purple">OFFLINE</h3>
                         </div>
                         <div class="hud-mini-graph">
-                            <span>WEBHOOK LINK</span>
+                            <span data-i18n="stat_webhook_link">WEBHOOK LINK</span>
                         </div>
                     </div>
                 </section>
                 
-                <!-- Main Grid Layout -->
-                <div class="dashboard-grid">
-                    <!-- Containers Table Card -->
-                    <div class="glass-card hud-panel container-list-card">
-                        <div class="hud-panel-header">
-                            <div class="header-left">
-                                <i class="ph ph-cpu"></i>
-                                <h2>VECTOR STREAM INDEX</h2>
-                            </div>
-                            <div class="search-box">
-                                <i class="ph ph-magnifying-glass"></i>
-                                <input type="text" id="search-input" placeholder="Query Node Image/ID...">
-                            </div>
+                <!-- Live Graphs Card -->
+                <div class="glass-card hud-panel charts-card">
+                    <div class="hud-panel-header">
+                        <div class="header-left">
+                            <i class="ph ph-chart-scatter"></i>
+                            <h2 data-i18n="chart_title">ANALYTICAL FLUX SENSORS</h2>
                         </div>
-                        <div class="table-wrapper">
-                            <table class="container-table hud-table">
-                                <thead>
-                                    <tr>
-                                        <th>NODE ASSIGNMENT</th>
-                                        <th>STATUS</th>
-                                        <th>VPU LOAD</th>
-                                        <th>MEM UTILIZATION</th>
-                                        <th>NET FLUX (IN/OUT)</th>
-                                        <th>COMMAND MATRIX</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="containers-tbody">
-                                    <tr class="placeholder-row">
-                                        <td colspan="6">
-                                            <div class="loading-state">
-                                                <div class="spinner"></div>
-                                                <p>Establishing quantum uplink to WebSocket...</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="container-selector-wrapper">
+                            <select id="chart-container-select" class="hud-select">
+                                <option value="">Select Subsystem...</option>
+                            </select>
                         </div>
                     </div>
-                    
-                    <!-- Live Graphs Card -->
-                    <div class="glass-card hud-panel charts-card">
-                        <div class="hud-panel-header">
-                            <div class="header-left">
-                                <i class="ph ph-chart-scatter"></i>
-                                <h2>ANALYTICAL FLUX SENSORS</h2>
-                            </div>
-                            <div class="container-selector-wrapper">
-                                <select id="chart-container-select" class="hud-select">
-                                    <option value="">Select Subsystem...</option>
-                                </select>
-                            </div>
+                    <div class="charts-container">
+                        <div class="chart-wrapper hud-chart-border">
+                            <canvas id="cpu-chart"></canvas>
                         </div>
-                        <div class="charts-container">
-                            <div class="chart-wrapper hud-chart-border">
-                                <canvas id="cpu-chart"></canvas>
-                            </div>
-                            <div class="chart-wrapper hud-chart-border">
-                                <canvas id="mem-chart"></canvas>
-                            </div>
+                        <div class="chart-wrapper hud-chart-border">
+                            <canvas id="mem-chart"></canvas>
                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sub-Systems View -->
+            <div class="view-pane hidden" id="view-containers">
+                <!-- Containers Table Card -->
+                <div class="glass-card hud-panel container-list-card">
+                    <div class="hud-panel-header">
+                        <div class="header-left">
+                            <i class="ph ph-cpu"></i>
+                            <h2 data-i18n="table_title">VECTOR STREAM INDEX</h2>
+                        </div>
+                        <div class="search-box">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" id="search-input" placeholder="Query Node Image/ID...">
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="container-table hud-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="th_node">NODE ASSIGNMENT</th>
+                                    <th data-i18n="th_status">STATUS</th>
+                                    <th data-i18n="th_vpu">VPU LOAD</th>
+                                    <th data-i18n="th_mem">MEM UTILIZATION</th>
+                                    <th data-i18n="th_net">NET FLUX (IN/OUT)</th>
+                                    <th data-i18n="th_actions">COMMAND MATRIX</th>
+                                </tr>
+                            </thead>
+                            <tbody id="containers-tbody">
+                                <tr class="placeholder-row">
+                                    <td colspan="6">
+                                        <div class="loading-state">
+                                            <div class="spinner"></div>
+                                            <p>Establishing quantum uplink to WebSocket...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
@@ -218,10 +218,10 @@
                     <div class="hud-panel-header">
                         <div class="header-left">
                             <i class="ph ph-terminal-window"></i>
-                            <h2 id="logs-title">SYSTEM DEBUG VECTOR</h2>
+                            <h2 id="logs-title" data-i18n="console_title">SYSTEM DEBUG VECTOR</h2>
                         </div>
                         <div class="logs-actions">
-                            <span id="selected-log-container-name" class="hud-badge">AWAITING COMPONENT TARGET</span>
+                            <span id="selected-log-container-name" class="hud-badge" data-i18n="console_awaiting">AWAITING COMPONENT TARGET</span>
                             <button class="btn btn-hud-icon" id="btn-clear-logs" title="Clear Buffer">
                                 <i class="ph ph-trash-simple"></i>
                             </button>
@@ -338,6 +338,6 @@ Awaiting sub-system target. Click on a node name above to link logs telemetry.
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Custom Script -->
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=2.0"></script>
 </body>
 </html>

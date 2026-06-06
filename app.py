@@ -112,36 +112,55 @@ def parse_docker_host(host_input: str) -> str:
 # Docker Client Initialization & Remote Host support
 stats_lock = threading.Lock()
 docker_client = None
-MOCK_MODE = True  # Default to True (start in mock mode)
+MOCK_MODE = False
+last_connection_error = ""
 
 def init_docker(host_url=None):
-    global docker_client, MOCK_MODE
+    global docker_client, MOCK_MODE, last_connection_error
     with stats_lock:
         try:
             if os.environ.get("DOCKER_MONITOR_MOCK") == "true":
                 print("Forcing J.A.R.V.I.S. Mock/Simulation Mode via environment variable.")
                 docker_client = None
                 MOCK_MODE = True
+                last_connection_error = "Forced mock mode"
                 return False
 
             parsed_host = parse_docker_host(host_url)
             if parsed_host:
                 print(f"Attempting connection to remote Docker host: {parsed_host} (parsed from: {host_url})")
-                docker_client = docker.DockerClient(base_url=parsed_host, timeout=5)
+                try:
+                    docker_client = docker.DockerClient(base_url=parsed_host, timeout=5)
+                    # Ping to verify the daemon is responsive
+                    docker_client.ping()
+                except Exception as first_err:
+                    # If tcp:// failed, try http:// as fallback
+                    if parsed_host.startswith("tcp://"):
+                        fallback_host = parsed_host.replace("tcp://", "http://", 1)
+                        print(f"Connection with tcp:// failed. Retrying fallback with http://: {fallback_host}")
+                        try:
+                            docker_client = docker.DockerClient(base_url=fallback_host, timeout=5)
+                            docker_client.ping()
+                        except Exception:
+                            raise first_err
+                    else:
+                        raise first_err
             else:
                 print("Attempting connection to local Docker engine...")
                 # On Windows, docker.from_env() connects via Named Pipe (//./pipe/docker_engine)
                 docker_client = docker.from_env(timeout=5)
+                # Ping to verify the daemon is responsive
+                docker_client.ping()
             
-            # Ping to verify the daemon is responsive
-            docker_client.ping()
             MOCK_MODE = False
+            last_connection_error = ""
             print("Successfully established link to Docker Engine.")
             return True
         except Exception as e:
             print(f"Docker connection failed: {e}")
             docker_client = None
             MOCK_MODE = True
+            last_connection_error = str(e)
             print("Switched to J.A.R.V.I.S. Mock/Simulation Mode.")
             return False
 
@@ -618,7 +637,8 @@ def update_config(payload: ConfigUpdate):
         "success": True, 
         "config": app_config,
         "docker_connected": connected,
-        "is_mock": MOCK_MODE
+        "is_mock": MOCK_MODE,
+        "error_message": last_connection_error if not connected else ""
     }
 
 # WebSocket Endpoint

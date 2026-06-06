@@ -1,30 +1,30 @@
 /* J.A.R.V.I.S. Core Stylesheet */
 :root {
-    --hud-bg-app: #03070d;
-    --hud-bg-panel: rgba(5, 12, 22, 0.65);
-    --hud-border-cyan: rgba(0, 229, 255, 0.15);
-    --hud-border-cyan-glow: rgba(0, 229, 255, 0.35);
+    --hud-bg-app: #060913;
+    --hud-bg-panel: rgba(10, 16, 30, 0.7);
+    --hud-border-cyan: rgba(0, 242, 254, 0.12);
+    --hud-border-cyan-glow: rgba(0, 242, 254, 0.25);
     
-    --color-cyan: #00e5ff;
-    --color-cyan-glow: rgba(0, 229, 255, 0.6);
-    --color-orange: #ff6d00;
-    --color-orange-glow: rgba(255, 109, 0, 0.6);
-    --color-red: #ff1744;
-    --color-red-glow: rgba(255, 23, 68, 0.6);
-    --color-purple: #7c4dff;
-    --color-purple-glow: rgba(124, 77, 255, 0.6);
-    --color-green: #00e676;
-    --color-green-glow: rgba(0, 230, 118, 0.6);
+    --color-cyan: #00f2fe;
+    --color-cyan-glow: rgba(0, 242, 254, 0.45);
+    --color-orange: #ff9f43;
+    --color-orange-glow: rgba(255, 159, 67, 0.4);
+    --color-red: #ff5252;
+    --color-red-glow: rgba(255, 82, 82, 0.4);
+    --color-purple: #9c88ff;
+    --color-purple-glow: rgba(156, 136, 255, 0.4);
+    --color-green: #05c46b;
+    --color-green-glow: rgba(5, 196, 107, 0.4);
     
-    --text-hud-main: #e0f7fa;
-    --text-hud-muted: #80deea;
-    --text-hud-dark: #006064;
+    --text-hud-main: #f1f5f9;
+    --text-hud-muted: #94a3b8;
+    --text-hud-dark: #334155;
     
     --font-heading: 'Orbitron', sans-serif;
     --font-stats: 'Rajdhani', sans-serif;
     --font-mono: 'Share Tech Mono', monospace;
     
-    --transition-hud: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --transition-hud: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Base Body Grid Reset */
@@ -62,7 +62,7 @@ body.jarvis-theme {
     background-size: 100% 4px;
     z-index: 999;
     pointer-events: none;
-    opacity: 0.8;
+    opacity: 0.05;
 }
 
 .hud-grid-overlay {
@@ -101,12 +101,8 @@ body.jarvis-theme {
 }
 
 /* Corners for HUD styling */
-.hud-card-corners::before,
-.hud-card-corners::after,
-.metric-card::before,
-.metric-card::after,
-.glass-card::before,
-.glass-card::after {
+/* Corner markers */
+.metric-card::before, .glass-card::before {
     content: '';
     position: absolute;
     width: 8px;
@@ -115,27 +111,62 @@ body.jarvis-theme {
     border-style: solid;
     pointer-events: none;
     transition: var(--transition-hud);
-}
-
-.metric-card::before, .glass-card::before {
     top: -1px;
     left: -1px;
     border-width: 2px 0 0 2px;
 }
 
 .metric-card::after, .glass-card::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: var(--color-cyan);
+    border-style: solid;
+    pointer-events: none;
+    transition: var(--transition-hud);
     bottom: -1px;
     right: -1px;
     border-width: 0 2px 2px 0;
 }
 
+.hud-card-corners::before {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: var(--color-cyan);
+    border-style: solid;
+    pointer-events: none;
+    transition: var(--transition-hud);
+    top: -1px;
+    right: -1px;
+    border-width: 2px 2px 0 0;
+}
+
+.hud-card-corners::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: var(--color-cyan);
+    border-style: solid;
+    pointer-events: none;
+    transition: var(--transition-hud);
+    bottom: -1px;
+    left: -1px;
+    border-width: 0 0 2px 2px;
+}
+
 /* Hover glow effect */
-.glass-card:hover::before, .glass-card:focus-within::before {
+.glass-card:hover::before, .glass-card:focus-within::before,
+.metric-card:hover::before {
     border-color: var(--color-cyan);
     box-shadow: -2px -2px 10px var(--color-cyan-glow);
 }
 
-.glass-card:hover::after, .glass-card:focus-within::after {
+.glass-card:hover::after, .glass-card:focus-within::after,
+.metric-card:hover::after {
     border-color: var(--color-cyan);
     box-shadow: 2px 2px 10px var(--color-cyan-glow);
 }
@@ -763,20 +794,26 @@ body.jarvis-theme {
 
 /* Charts container and styles */
 .charts-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: calc(100% - 30px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+@media (max-width: 992px) {
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 .chart-wrapper {
-    flex-grow: 1;
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.25);
     border: 1px solid var(--hud-border-cyan);
-    border-radius: 2px;
-    padding: 14px;
-    max-height: 180px;
-    box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.05);
+    border-radius: 6px;
+    padding: 16px;
+    min-height: 240px;
+    box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.03);
+    transition: var(--transition-hud);
 }
 
 /* Console terminal window */
@@ -1067,4 +1104,8 @@ body.rtl-mode .toast-info { border-right: 4px solid var(--color-cyan); }
 @keyframes slideInLeft {
     0% { transform: translateX(-120%); opacity: 0; }
     100% { transform: translateX(0); opacity: 1; }
+}
+
+.hidden {
+    display: none !important;
 }
