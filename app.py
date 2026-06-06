@@ -112,7 +112,7 @@ def parse_docker_host(host_input: str) -> str:
 # Docker Client Initialization & Remote Host support
 stats_lock = threading.Lock()
 docker_client = None
-MOCK_MODE = False
+MOCK_MODE = True  # Default to True (start in mock mode)
 
 def init_docker(host_url=None):
     global docker_client, MOCK_MODE
