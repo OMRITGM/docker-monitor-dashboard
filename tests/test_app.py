@@ -2,6 +2,9 @@ from fastapi.testclient import TestClient
 import sys
 import os
 
+# Force mock mode for unit tests
+os.environ["DOCKER_MONITOR_MOCK"] = "true"
+
 # Ensure the app module can be imported
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

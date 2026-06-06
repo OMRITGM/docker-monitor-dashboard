@@ -118,6 +118,12 @@ def init_docker(host_url=None):
     global docker_client, MOCK_MODE
     with stats_lock:
         try:
+            if os.environ.get("DOCKER_MONITOR_MOCK") == "true":
+                print("Forcing J.A.R.V.I.S. Mock/Simulation Mode via environment variable.")
+                docker_client = None
+                MOCK_MODE = True
+                return False
+
             parsed_host = parse_docker_host(host_url)
             if parsed_host:
                 print(f"Attempting connection to remote Docker host: {parsed_host} (parsed from: {host_url})")
