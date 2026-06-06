@@ -1,5 +1,11 @@
 from fastapi.testclient import TestClient
-from app import app
+import sys
+import os
+
+# Ensure the app module can be imported
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app import app, MOCK_CONTAINERS, MOCK_MODE
 
 client = TestClient(app)
 
@@ -13,7 +19,7 @@ def test_get_containers():
     data = response.json()
     assert isinstance(data, list)
     # We expect mock containers in simulation mode
-    assert len(data) > 0
+    assert len(data) > 0, f"Expected mock containers to be returned, but got empty list. MOCK_MODE={MOCK_MODE}, available_mocks={list(MOCK_CONTAINERS.keys())}"
 
 def test_get_config():
     response = client.get("/api/config")
