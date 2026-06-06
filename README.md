@@ -20,18 +20,24 @@ A state-of-the-art, real-time Docker container monitoring dashboard inspired by 
 1. **J.A.R.V.I.S. Cybernetic Interface**: 
    - Obsidian dark UI with translucent glassmorphic elements, neon glowing borders, scanlines, and diagnostic arc reactor rings.
    - Micro-interactions, visual charts (CPU & Memory), and dynamic console output.
-2. **Text-to-Speech (TTS) & Synth Audio (SFX)**:
+2. **Multi-Tab HUD Navigation** (New in v2.0): 
+   - Beautifully split into logical sub-views for a cleaner experience:
+     - **SYSTEM HUD**: High-level system vitals and performance metrics charts.
+     - **SUB-SYSTEMS**: Detailed container vector registry, search filters, controls, and live log terminal.
+     - **COMMS LINK**: Setup remote Docker connections and webhook receivers.
+3. **Text-to-Speech (TTS) & Synth Audio (SFX)**:
    - J.A.R.V.I.S. vocalizes container status updates (e.g. startup, shutdowns, warnings).
    - Audio feedback is dynamically localized based on your selected language (English / Hebrew).
    - Custom synthesized sci-fi sound effects built using the browser's Web Audio API.
-3. **Multi-Language Support (Localization)**:
-   - Fully supports **English** and **Hebrew (RTL)** layout mirroring.
-4. **Remote Synology & Custom NAS Auto-Mapping**:
+4. **Multi-Language Support (Localization)**:
+   - Fully supports **English** and **Hebrew (RTL)** layout mirroring with permanent state preservation.
+5. **Remote Synology & Custom NAS Auto-Mapping**:
    - Easily connect to a remote Synology NAS (e.g., `http://192.168.50.193:5000/`).
    - J.A.R.V.I.S. automatically resolves the management port and maps it to Docker's standard TCP port (`tcp://192.168.50.193:2375`).
-5. **Mock/Simulation Mode**:
+   - Includes **Connection Fallback & Error Telemetry** (New in v2.0) with robust protocol fallback (`tcp://` / `http://`) and real-time failure messages.
+6. **Mock/Simulation Mode**:
    - If a local or remote Docker daemon is offline/inaccessible, the dashboard dynamically activates Mock Mode so you can preview telemetry, metrics trends, container actions, and alert dispatchers immediately.
-6. **Webhook Alerts**:
+7. **Webhook Alerts**:
    - Send instant JSON payloads to n8n, Slack, Discord, or any custom webhook endpoint when a container unexpected exits or changes state.
 
 ---
