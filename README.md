@@ -5,6 +5,13 @@ A state-of-the-art, real-time Docker container monitoring dashboard inspired by 
 ![Dashboard Demo](https://img.shields.io/badge/Theme-J.A.R.V.I.S.%20HUD-cyan?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green?style=for-the-badge)
 ![JavaScript](https://img.shields.io/badge/Frontend-Vanilla%20JS-blue?style=for-the-badge)
+![Python CI](https://github.com/OMRITGM/docker-monitor-dashboard/actions/workflows/python-app.yml/badge.svg)
+
+---
+
+## 🖥️ Preview
+
+![J.A.R.V.I.S. Dashboard Preview](static/preview.png)
 
 ---
 
