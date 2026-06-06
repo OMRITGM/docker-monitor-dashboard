@@ -474,7 +474,7 @@ def get_containers():
     containers_list = []
     
     with stats_lock:
-        # Always use MOCK_CONTAINERS as the data source in MOCK_MODE
+        # Always use MOCK_CONTAINERS if in MOCK_MODE or docker_client is None
         if MOCK_MODE or not docker_client:
             for name, details in MOCK_CONTAINERS.items():
                 containers_list.append({
